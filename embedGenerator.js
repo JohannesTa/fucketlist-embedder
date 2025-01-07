@@ -1,4 +1,4 @@
-function generateEmbedCode() {
+window.generateEmbedCode = function () {
     const sheetUrl = document.getElementById("sheetUrl").value.trim();
     const outputArea = document.getElementById("embedCode");
 
@@ -76,11 +76,11 @@ function generateEmbedCode() {
         });
 </script>`;
     outputArea.value = embedCode;
-}
+};
 
-function copyToClipboard() {
+window.copyToClipboard = function () {
     const outputArea = document.getElementById("embedCode");
     outputArea.select();
     document.execCommand("copy");
     alert("Embed code copied to clipboard!");
-}
+};
