@@ -42,13 +42,13 @@ window.generateEmbedCode = function () {
             const legend = document.createElement("div");
             legend.style.marginBottom = "20px";
             legend.style.fontFamily = "Helvetica, Arial, sans-serif";
-            legend.innerHTML = `
+            legend.innerHTML = "
                 <strong>Legend:</strong>
                 <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%; margin-right: 5px;"></span> Initiated
                 <span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-right: 5px;"></span> Help Needed
                 <span style="display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; margin-right: 5px;"></span> In Progress
                 <span style="text-decoration: line-through; margin-left: 15px;">Completed</span>
-            `;
+            ";
             container.appendChild(legend);
 
             // Build HTML
