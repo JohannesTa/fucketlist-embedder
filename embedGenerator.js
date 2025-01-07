@@ -2,23 +2,19 @@ window.generateEmbedCode = function () {
     const sheetUrl = document.getElementById("sheetUrl").value.trim();
     const outputArea = document.getElementById("embedCode");
 
-    // Validate the URL
     if (!sheetUrl.includes("https://docs.google.com/spreadsheets/")) {
         alert("Please enter a valid Google Sheet URL.");
         outputArea.value = "";
         return;
     }
 
-    // Convert the URL to CSV format
     const csvUrl = sheetUrl.replace(/\/edit.*/, "/pub?output=csv");
 
-    // Generate the HTML code
     const embedCode = `
 <div id="fucketlist-container"></div>
 <script>
     const sheetUrl = "${csvUrl}";
 
-    // CSV parsing function to handle quoted fields and preserve commas
     function parseCSV(csvText) {
         const rows = [];
         const lines = csvText.split("\\n");
@@ -37,7 +33,6 @@ window.generateEmbedCode = function () {
             const rows = parseCSV(csvText);
             const container = document.getElementById("fucketlist-container");
 
-            // Add legend
             const legend = document.createElement("div");
             legend.style.marginBottom = "20px";
             legend.style.fontFamily = "Helvetica, Arial, sans-serif";
@@ -50,7 +45,6 @@ window.generateEmbedCode = function () {
             \`;
             container.appendChild(legend);
 
-            // Build HTML for the list
             const list = document.createElement("ul");
             list.style.listStyle = "none";
             list.style.padding = "0";
@@ -59,7 +53,6 @@ window.generateEmbedCode = function () {
             list.style.gridTemplateColumns = "repeat(auto-fit, minmax(300px, 1fr))";
             list.style.gap = "20px";
             list.style.maxWidth = "1000px";
-            list.style.fontFamily = "Helvetica, Arial, sans-serif";
 
             rows.slice(1).forEach(([title, status]) => {
                 if (!title) return;
@@ -106,4 +99,21 @@ window.generateEmbedCode = function () {
         });
 </script>`;
     outputArea.value = embedCode;
+};
+
+window.copyToClipboard = function () {
+    const outputArea = document.getElementById("embedCode");
+    if (!outputArea.value) {
+        alert("There is nothing to copy!");
+        return;
+    }
+
+    navigator.clipboard.writeText(outputArea.value)
+        .then(() => {
+            alert("Embed code copied to clipboard!");
+        })
+        .catch((err) => {
+            console.error("Failed to copy: ", err);
+            alert("Failed to copy the embed code. Please try again.");
+        });
 };
