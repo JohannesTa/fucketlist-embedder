@@ -111,18 +111,14 @@ function generateEmbedCode(sheetUrl, viewType) {
 
     function sortItemsByColumn(rows, numColumns) {
         const itemsPerColumn = Math.ceil(rows.length / numColumns);
-        const sorted = [];
+        const sorted = Array.from({ length: numColumns }, () => []);
 
-        for (let i = 0; i < itemsPerColumn; i++) {
-            for (let col = 0; col < numColumns; col++) {
-                const index = col * itemsPerColumn + i;
-                if (index < rows.length) {
-                    sorted.push(rows[index]);
-                }
-            }
-        }
+        rows.forEach((row, index) => {
+            const colIndex = Math.floor(index / itemsPerColumn);
+            sorted[colIndex].push(row);
+        });
 
-        return sorted;
+        return sorted.flat();
     }
 
     fetch(sheetUrl)
@@ -166,6 +162,7 @@ function generateEmbedCode(sheetUrl, viewType) {
                     if (viewType === "dots") {
                         const dotSpan = document.createElement("span");
                         dotSpan.className = "fucketlist-dot";
+                        dotSpan.style.backgroundColor = status.toLowerCase().trim() === "completed" ? "black" : status.toLowerCase().trim() === "initiated" ? "orange" : "#00b2ff";
                         li.appendChild(dotSpan);
                     } else {
                         const numberSpan = document.createElement("span");
