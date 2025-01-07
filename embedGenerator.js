@@ -18,25 +18,13 @@ function generateEmbedCode() {
 <script>
     const sheetUrl = "${csvUrl}";
 
-    function parseCSV(csvText) {
-        const rows = [];
-        const lines = csvText.split("\\n");
-        for (const line of lines) {
-            const matches = line.match(/("(?:[^"]|"")*"|[^",]+)(?=,|$)/g);
-            if (matches) {
-                rows.push(matches.map(field => field.replace(/^"|"$/g, "").trim()));
-            }
-        }
-        return rows;
-    }
-
     fetch(sheetUrl)
         .then(response => response.text())
         .then(csvText => {
-            const rows = parseCSV(csvText);
-            const container = document.getElementById("fucketlist-container");
+            const rows = csvText.split("\\n").map(row => row.split(","));
+            const container = document.getElementById('fucketlist-container');
 
-            const list = document.createElement("ul");
+            const list = document.createElement('ul');
             list.style.listStyle = "none";
             list.style.padding = "0";
             list.style.margin = "20px auto";
@@ -48,7 +36,7 @@ function generateEmbedCode() {
             rows.slice(1).forEach(([title, status]) => {
                 if (!title) return;
 
-                const li = document.createElement("li");
+                const li = document.createElement('li');
                 li.style.backgroundColor = "#f9f9f9";
                 li.style.borderRadius = "5px";
                 li.style.padding = "10px 15px";
@@ -57,13 +45,13 @@ function generateEmbedCode() {
                 li.style.justifyContent = "space-between";
                 li.style.alignItems = "center";
 
-                const titleSpan = document.createElement("span");
+                const titleSpan = document.createElement('span');
                 if (status.toLowerCase().trim() === "completed") {
                     titleSpan.style.textDecoration = "line-through";
                 }
                 titleSpan.textContent = title;
 
-                const dotSpan = document.createElement("span");
+                const dotSpan = document.createElement('span');
                 if (status.toLowerCase().trim() === "initiated") {
                     dotSpan.style.backgroundColor = "orange";
                 } else if (status.toLowerCase().trim() === "help needed") {
@@ -84,10 +72,9 @@ function generateEmbedCode() {
             container.appendChild(list);
         })
         .catch(error => {
-            console.error("Error loading Fucketlist:", error);
+            console.error("Error loading data:", error);
         });
 </script>`;
-
     outputArea.value = embedCode;
 }
 
