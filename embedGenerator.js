@@ -1,175 +1,234 @@
-window.generateEmbedCode = function () {
-    const sheetUrl = document.getElementById("sheetUrl").value.trim();
-    const previewContainer = document.getElementById("previewContainer");
-    const outputArea = document.getElementById("embedCode");
+document.addEventListener("DOMContentLoaded", function () {
+    const previewArea = document.getElementById("fucketlist-preview");
+    const embedCodeArea = document.getElementById("embedCode");
+    const generateButton = document.getElementById("generateEmbedCode");
+    const viewSwitcher = document.getElementById("viewSwitcher");
+    const sheetUrlInput = document.getElementById("sheetUrl");
+    const copyButton = document.getElementById("copyCode");
 
-    if (!sheetUrl.includes("https://docs.google.com/spreadsheets/")) {
-        alert("Please enter a valid Google Sheet URL.");
-        return;
-    }
+    function generateEmbedCode(viewType, sheetUrl) {
+        let embedCode = `
+        <div id="fucketlist-container"></div>
+        <link rel="stylesheet" href="https://use.typekit.net/vdp2gno.css">
+        <style>
+            .fucketlist-title {
+                font-size: 1.2em;
+                line-height: 1.4;
+                position: relative;
+            }
 
-    const csvUrl = sheetUrl.replace(/\/edit.*/, "/pub?output=csv");
+            .fucketlist-title.hidden {
+                position: relative;
+                text-align: center;
+                overflow: hidden;
+                background-image: url('https://johannesta.github.io/fucketlist-embedder/scratch-effect.svg');
+                background-repeat: repeat-x;
+                background-size: cover;
+                cursor: default;
+                transition: background-image 0.3s ease;
+            }
 
-    const embedCode = `
-<div id="fucketlist-container"></div>
-<link rel="stylesheet" href="https://use.typekit.net/vdp2gno.css">
-<style>
-    @font-face {
-        font-family: "adobe-handwriting-tiffany";
-        src: url("https://use.typekit.net/vdp2gno.css");
-    }
-    #fucketlist-container {
-        font-family: "adobe-handwriting-tiffany", sans-serif;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    .fucketlist-legend {
-        margin-bottom: 20px;
-        font-family: "adobe-handwriting-tiffany", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-    }
-    .fucketlist-legend span {
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 10px;
-    }
-    .fucketlist-legend .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-    }
-    .fucketlist-legend .yellow { background-color: yellow; }
-    .fucketlist-legend .red { border-bottom: 2px solid red; }
-    .fucketlist-legend .blue { background-color: blue; }
-    .fucketlist-legend .completed { text-decoration: line-through; }
-    ul.fucketlist-items {
-        list-style: none;
-        padding: 0;
-        margin: 20px auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-    }
-    .fucketlist-item {
-        display: flex;
-        align-items: center;
-        background-color: #fff;
-        border-radius: 5px;
-        padding: 10px 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .fucketlist-dot {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-    .fucketlist-dot.blue { background-color: blue; }
-    .fucketlist-dot.yellow { background-color: yellow; }
-    .fucketlist-title {
-        font-size: 1.2em;
-        position: relative;
-        font-family: "adobe-handwriting-tiffany", sans-serif;
-    }
-    .fucketlist-title.red {
-        position: relative;
-    }
-    .fucketlist-title.red::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -2px; /* Position underline below text */
-        width: 100%; /* Stretch underline across text */
-        height: 4px; /* Thickness of underline */
-        background: url("https://raw.githubusercontent.com/your-username/your-repository/main/hand-drawn-underline.png") no-repeat;
-        background-size: 100% 100%; /* Stretch the underline image */
-    }
-    .fucketlist-title.completed { text-decoration: line-through; }
-</style>
-<script>
-    const sheetUrl = "${csvUrl}";
+            .fucketlist-title.hidden:hover {
+                background-image: none;
+                color: grey;
+            }
 
-    fetch(sheetUrl)
-        .then(response => response.text())
-        .then(csvText => {
-            const rows = csvText.split("\\n").map(row => row.split(","));
-            const container = document.getElementById("fucketlist-container");
+            .fucketlist-title.help-needed {
+                color: black;
+            }
 
-            // Create legend
-            const legend = document.createElement("div");
-            legend.className = "fucketlist-legend";
-            legend.innerHTML = \`
-                <span class="dot yellow"></span> Initiated
-                <span class="dot blue"></span> In Progress
-                <span class="dot red"></span> Help Needed
-                <span class="completed">Completed</span>
-            \`;
-            container.appendChild(legend);
+            .fucketlist-title.help-needed::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 4px;
+                background-image: url('https://johannesta.github.io/fucketlist-embedder/underline.png');
+                background-repeat: repeat-x;
+                background-size: 100% 4px;
+            }
 
-            // Create list
-            const list = document.createElement("ul");
-            list.className = "fucketlist-items";
+            .fucketlist-legend {
+                margin-bottom: 20px;
+                font-family: 'adobe-handwriting-tiffany', sans-serif;
+                font-weight: 400;
+                font-style: normal;
+                font-size: 1.2em;
+                display: inline-block;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+            }
 
-            rows.slice(1).forEach(([title, status]) => {
-                if (!title) return;
+            .fucketlist-list {
+                list-style: none;
+                padding: 0;
+                margin: 20px auto;
+                display: grid;
+                gap: 20px;
+                max-width: 1000px;
+                font-family: 'adobe-handwriting-tiffany', sans-serif;
+                font-weight: 800;
+                font-style: normal;
+            }
 
-                const li = document.createElement("li");
-                li.className = "fucketlist-item";
+            .fucketlist-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
 
-                const dotSpan = document.createElement("span");
-                dotSpan.className = "fucketlist-dot";
+            ${viewType === "dots" ? `
+            .fucketlist-dot {
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                flex-shrink: 0;
+                margin-top: 4px;
+            }` : `
+            .fucketlist-number {
+                font-weight: bold;
+                font-size: 1.2em;
+                flex-shrink: 0;
+            }`}
+        </style>
+        <script>
+            const sheetUrl = "${sheetUrl}";
 
-                const titleSpan = document.createElement("span");
-                titleSpan.className = "fucketlist-title";
+            function parseCSV(csvText) {
+                const rows = [];
+                const lines = csvText.split("\\n");
+                for (const line of lines) {
+                    const matches = line.match(/("(?:[^"]|"")*"|[^",]+)(?=,|$)/g);
+                    if (matches) {
+                        rows.push(matches.map(field => field.replace(/^"|"$/g, "").trim()));
+                    }
+                }
+                return rows;
+            }
 
-                if (status.toLowerCase().trim() === "in progress") {
-                    dotSpan.classList.add("blue");
-                    li.appendChild(dotSpan);
-                } else if (status.toLowerCase().trim() === "initiated") {
-                    dotSpan.classList.add("yellow");
-                    li.appendChild(dotSpan);
-                } else if (status.toLowerCase().trim() === "help needed") {
-                    titleSpan.classList.add("red");
-                } else if (status.toLowerCase().trim() === "completed") {
-                    titleSpan.classList.add("completed");
+            function sortItemsByColumn(rows, numColumns) {
+                const itemsPerColumn = Math.ceil(rows.length / numColumns);
+                const sorted = [];
+
+                for (let i = 0; i < itemsPerColumn; i++) {
+                    for (let col = 0; col < numColumns; col++) {
+                        const index = col * itemsPerColumn + i;
+                        if (index < rows.length) {
+                            sorted.push(rows[index]);
+                        }
+                    }
                 }
 
-                titleSpan.textContent = title;
-                li.appendChild(titleSpan);
-                list.appendChild(li);
-            });
+                return sorted;
+            }
 
-            container.innerHTML = ""; // Clear previous content
-            container.appendChild(list);
-        })
-        .catch(error => {
-            console.error("Error loading Fucketlist:", error);
-        });
-</script>
-`;
+            fetch(sheetUrl)
+                .then(response => response.text())
+                .then(csvText => {
+                    const rows = parseCSV(csvText).slice(1); // Skip the header row
+                    const container = document.getElementById("fucketlist-container");
 
-    // Update the live preview
-    previewContainer.innerHTML = embedCode;
+                    // Add legend
+                    const legend = document.createElement("div");
+                    legend.className = "fucketlist-legend";
+                    legend.innerHTML = \`
+                        <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%;"></span> Initiated  
+                        <span style="display: inline-block; width: 10px; height: 10px; background-color: #00b2ff; border-radius: 50%; margin-left: 15px;"></span> In Progress
+                        <span style="color: black; text-decoration: underline; text-decoration-color: red; margin-left: 15px;">Help Needed</span>
+                        <span style="text-decoration: line-through; margin-left: 15px;">Completed</span>
+                    \`;
+                    container.appendChild(legend);
 
-    // Store the embed code for copying
-    outputArea.value = embedCode;
-};
+                    // Determine the number of columns based on screen width
+                    const determineColumns = () => {
+                        const width = window.innerWidth;
+                        if (width > 1400) return 4;
+                        if (width > 1000) return 3;
+                        if (width > 600) return 2;
+                        return 1;
+                    };
 
-window.copyToClipboard = function () {
-    const outputArea = document.getElementById("embedCode");
-    if (!outputArea.value) {
-        alert("There is nothing to copy!");
-        return;
+                    const renderList = () => {
+                        const numColumns = determineColumns();
+                        const sortedRows = sortItemsByColumn(rows, numColumns);
+
+                        // Create list
+                        const list = document.createElement("ul");
+                        list.className = "fucketlist-list";
+                        list.style.gridTemplateColumns = \`repeat(\${numColumns}, 1fr)\`;
+
+                        sortedRows.forEach(([title, status], index) => {
+                            if (!title) return;
+
+                            const li = document.createElement("li");
+                            li.className = "fucketlist-item";
+
+                            if (viewType === "dots") {
+                                const dotSpan = document.createElement("span");
+                                dotSpan.className = "fucketlist-dot";
+                                li.appendChild(dotSpan);
+                            } else {
+                                const numberSpan = document.createElement("span");
+                                numberSpan.className = "fucketlist-number";
+                                numberSpan.textContent = \`\${index + 1}.\`;
+                                li.appendChild(numberSpan);
+                            }
+
+                            const titleSpan = document.createElement("span");
+                            titleSpan.className = "fucketlist-title";
+                            titleSpan.textContent = title;
+                            li.appendChild(titleSpan);
+                            list.appendChild(li);
+                        });
+
+                        const existingList = container.querySelector(".fucketlist-list");
+                        if (existingList) existingList.remove();
+                        container.appendChild(list);
+                    };
+
+                    renderList();
+                    window.addEventListener("resize", renderList);
+                })
+                .catch(error => {
+                    console.error("Error loading Fucketlist:", error);
+                    const container = document.getElementById("fucketlist-container");
+                    container.textContent = "Failed to load Fucketlist.";
+                });
+        </script>
+        `;
+        return embedCode;
     }
 
-    navigator.clipboard.writeText(outputArea.value)
-        .then(() => {
-            alert("Embed code copied to clipboard!");
-        })
-        .catch((err) => {
-            console.error("Failed to copy: ", err);
-            alert("Failed to copy the embed code. Please try again.");
-        });
-};
+    function updatePreview() {
+        const viewType = viewSwitcher.value;
+        const sheetUrl = sheetUrlInput.value.trim();
+        if (!sheetUrl) return;
+
+        const embedCode = generateEmbedCode(viewType, sheetUrl);
+        previewArea.innerHTML = embedCode;
+    }
+
+    generateButton.addEventListener("click", function () {
+        const viewType = viewSwitcher.value;
+        const sheetUrl = sheetUrlInput.value.trim();
+        if (!sheetUrl) {
+            alert("Please enter a valid Google Sheet URL!");
+            return;
+        }
+
+        const embedCode = generateEmbedCode(viewType, sheetUrl);
+        embedCodeArea.value = embedCode;
+        alert("Embed code generated successfully!");
+    });
+
+    copyButton.addEventListener("click", function () {
+        embedCodeArea.select();
+        document.execCommand("copy");
+        alert("Embed code copied to clipboard!");
+    });
+
+    viewSwitcher.addEventListener("change", updatePreview);
+    sheetUrlInput.addEventListener("input", updatePreview);
+});
