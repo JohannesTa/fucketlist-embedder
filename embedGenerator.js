@@ -90,12 +90,11 @@ function generateEmbedCode(sheetUrl, viewType) {
     }
     `}
 </style>
-    `;
+`;
 
     const script = `
 <script>
     const sheetUrl = "${sheetUrl}";
-    const viewType = "${viewType}";
 
     function parseCSV(csvText) {
         const rows = [];
@@ -159,7 +158,7 @@ function generateEmbedCode(sheetUrl, viewType) {
                     const li = document.createElement("li");
                     li.className = "fucketlist-item";
 
-                    if (viewType === "dots") {
+                    if ("${viewType}" === "dots") {
                         const dotSpan = document.createElement("span");
                         dotSpan.className = "fucketlist-dot";
                         dotSpan.style.backgroundColor = status.toLowerCase().trim() === "completed" ? "black" : status.toLowerCase().trim() === "initiated" ? "orange" : "#00b2ff";
@@ -167,6 +166,7 @@ function generateEmbedCode(sheetUrl, viewType) {
                     } else {
                         const numberSpan = document.createElement("span");
                         numberSpan.className = "fucketlist-number";
+                        numberSpan.style.color = status.toLowerCase().trim() === "completed" ? "black" : status.toLowerCase().trim() === "initiated" ? "orange" : "#00b2ff";
                         numberSpan.textContent = \`\${index + 1}.\`;
                         li.appendChild(numberSpan);
                     }
@@ -202,7 +202,7 @@ function generateEmbedCode(sheetUrl, viewType) {
             container.textContent = "Failed to load Fucketlist.";
         });
 </script>
-    `;
+`;
 
     return `<div id="fucketlist-container"></div>${sharedStyles}${script}`;
 }
