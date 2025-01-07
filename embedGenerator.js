@@ -1,18 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const sheetInput = document.getElementById("sheetUrl");
-    const viewSelector = document.getElementById("viewType");
-    const previewContainer = document.getElementById("preview");
-    const codeOutput = document.getElementById("embedCode");
-    const copyButton = document.getElementById("copyCode");
+function generateEmbedCode(sheetUrl, viewType) {
+    if (!sheetUrl) {
+        alert("Please provide a valid Google Sheets URL.");
+        return '';
+    }
 
-    function generateEmbedCode(sheetUrl, viewType) {
-        if (!sheetUrl) {
-            alert("Please provide a valid Google Sheets URL.");
-            return;
-        }
-
-        // Shared styles
-        const sharedStyles = `
+    const sharedStyles = `
 <link rel="stylesheet" href="https://use.typekit.net/vdp2gno.css">
 <style>
     .fucketlist-title {
@@ -98,12 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     `}
 </style>
-        `;
+    `;
 
-        // Script
-        const script = `
+    const script = `
 <script>
     const sheetUrl = "${sheetUrl}";
+    const viewType = "${viewType}";
 
     function parseCSV(csvText) {
         const rows = [];
@@ -136,10 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(sheetUrl)
         .then(response => response.text())
         .then(csvText => {
-            const rows = parseCSV(csvText).slice(1); // Skip the header row
+            const rows = parseCSV(csvText).slice(1);
             const container = document.getElementById("fucketlist-container");
 
-            // Add legend
             const legend = document.createElement("div");
             legend.className = "fucketlist-legend";
             legend.innerHTML = \`
@@ -150,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
             \`;
             container.appendChild(legend);
 
-            // Determine the number of columns based on screen width
             const determineColumns = () => {
                 const width = window.innerWidth;
                 if (width > 1400) return 4;
@@ -163,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const numColumns = determineColumns();
                 const sortedRows = sortItemsByColumn(rows, numColumns);
 
-                // Create list
                 const list = document.createElement("ul");
                 list.className = "fucketlist-list";
                 list.style.gridTemplateColumns = \`repeat(\${numColumns}, 1fr)\`;
@@ -174,20 +163,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     const li = document.createElement("li");
                     li.className = "fucketlist-item";
 
-                    ${viewType === "dots" ? `
-                    const dotSpan = document.createElement("span");
-                    dotSpan.className = "fucketlist-dot";
-                    li.appendChild(dotSpan);
-                    ` : `
-                    const numberSpan = document.createElement("span");
-                    numberSpan.className = "fucketlist-number";
-                    numberSpan.textContent = \`\${index + 1}.\`;
-                    li.appendChild(numberSpan);
-                    `}
+                    if (viewType === "dots") {
+                        const dotSpan = document.createElement("span");
+                        dotSpan.className = "fucketlist-dot";
+                        li.appendChild(dotSpan);
+                    } else {
+                        const numberSpan = document.createElement("span");
+                        numberSpan.className = "fucketlist-number";
+                        numberSpan.textContent = \`\${index + 1}.\`;
+                        li.appendChild(numberSpan);
+                    }
 
                     const titleSpan = document.createElement("span");
                     titleSpan.className = "fucketlist-title";
                     titleSpan.textContent = title;
+
+                    if (status.toLowerCase().trim() === "hidden") {
+                        titleSpan.className = "fucketlist-title hidden";
+                        titleSpan.textContent = "To be revealed soon";
+                    } else if (status.toLowerCase().trim() === "help needed") {
+                        titleSpan.classList.add("help-needed");
+                    } else if (status.toLowerCase().trim() === "completed") {
+                        titleSpan.style.textDecoration = "line-through";
+                    }
+
                     li.appendChild(titleSpan);
                     list.appendChild(li);
                 });
@@ -206,28 +205,23 @@ document.addEventListener("DOMContentLoaded", () => {
             container.textContent = "Failed to load Fucketlist.";
         });
 </script>
-        `;
+    `;
 
-        // Combine everything
-        return `<div id="fucketlist-container"></div>${sharedStyles}${script}`;
-    }
+    return `<div id="fucketlist-container"></div>${sharedStyles}${script}`;
+}
 
-    function updatePreview() {
-        const sheetUrl = sheetInput.value;
-        const viewType = viewSelector.value;
-        const embedCode = generateEmbedCode(sheetUrl, viewType);
-        previewContainer.innerHTML = embedCode; // Show live preview
-        codeOutput.value = embedCode; // Update code for copying
-    }
+document.getElementById("generateCode").addEventListener("click", () => {
+    const sheetUrl = document.getElementById("sheetUrl").value;
+    const viewType = document.getElementById("viewType").value;
+    const embedCode = generateEmbedCode(sheetUrl, viewType);
 
-    copyButton.addEventListener("click", () => {
-        codeOutput.select();
-        document.execCommand("copy");
-        alert("Embed code copied to clipboard!");
-    });
+    document.getElementById("outputArea").value = embedCode;
+    document.getElementById("previewArea").innerHTML = embedCode;
+});
 
-    sheetInput.addEventListener("input", updatePreview);
-    viewSelector.addEventListener("change", updatePreview);
-
-    updatePreview(); // Initial preview render
+document.getElementById("copyToClipboard").addEventListener("click", () => {
+    const outputArea = document.getElementById("outputArea");
+    outputArea.select();
+    document.execCommand("copy");
+    alert("Embed code copied to clipboard!");
 });
