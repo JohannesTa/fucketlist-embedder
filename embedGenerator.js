@@ -33,18 +33,19 @@ window.generateEmbedCode = function () {
             const rows = parseCSV(csvText);
             const container = document.getElementById("fucketlist-container");
 
+            // Add legend without the word "Legend"
             const legend = document.createElement("div");
             legend.style.marginBottom = "20px";
             legend.style.fontFamily = "Helvetica, Arial, sans-serif";
             legend.innerHTML = \`
-                <strong>Legend:</strong>
-                <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%; margin-right: 5px;"></span> Initiated
-                <span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-right: 5px;"></span> Help Needed
-                <span style="display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; margin-right: 5px;"></span> In Progress
+                <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%;"></span> Initiated  
+                <span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-left: 15px;"></span> Help Needed
+                <span style="display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; margin-left: 15px;"></span> In Progress
                 <span style="text-decoration: line-through; margin-left: 15px;">Completed</span>
             \`;
             container.appendChild(legend);
 
+            // Build HTML for the list
             const list = document.createElement("ul");
             list.style.listStyle = "none";
             list.style.padding = "0";
@@ -53,6 +54,7 @@ window.generateEmbedCode = function () {
             list.style.gridTemplateColumns = "repeat(auto-fit, minmax(300px, 1fr))";
             list.style.gap = "20px";
             list.style.maxWidth = "1000px";
+            list.style.fontFamily = "Helvetica, Arial, sans-serif";
 
             rows.slice(1).forEach(([title, status]) => {
                 if (!title) return;
@@ -65,6 +67,7 @@ window.generateEmbedCode = function () {
                 li.style.display = "flex";
                 li.style.justifyContent = "space-between";
                 li.style.alignItems = "center";
+                li.style.fontFamily = "Helvetica, Arial, sans-serif";
 
                 const titleSpan = document.createElement("span");
                 if (status.toLowerCase().trim() === "completed") {
