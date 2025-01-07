@@ -1,10 +1,10 @@
 window.generateEmbedCode = function () {
     const sheetUrl = document.getElementById("sheetUrl").value.trim();
+    const previewContainer = document.getElementById("previewContainer");
     const outputArea = document.getElementById("embedCode");
 
     if (!sheetUrl.includes("https://docs.google.com/spreadsheets/")) {
         alert("Please enter a valid Google Sheet URL.");
-        outputArea.value = "";
         return;
     }
 
@@ -12,95 +12,110 @@ window.generateEmbedCode = function () {
 
     const embedCode = `
 <div id="fucketlist-container"></div>
+<link rel="stylesheet" href="https://use.typekit.net/vdp2gno.css">
+<style>
+    @font-face {
+        font-family: "adobe-handwriting-tiffany";
+        src: url("https://use.typekit.net/vdp2gno.css");
+    }
+    .fucketlist-item {
+        font-family: "adobe-handwriting-tiffany", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .fucketlist-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    .fucketlist-dot.blue {
+        background-color: blue;
+    }
+    .fucketlist-dot.yellow {
+        background-color: yellow;
+    }
+    .fucketlist-title {
+        position: relative;
+        font-size: 1.2em;
+    }
+    .fucketlist-title.red {
+        position: relative;
+        display: inline-block;
+    }
+    .fucketlist-title.red::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px; /* Adjust to position the underline below the text */
+        width: 100%;
+        height: 6px; /* Thickness of the underline */
+        background: url("https://your-github-url/hand-drawn-underline.png") repeat-x;
+        background-size: contain;
+    }
+</style>
 <script>
     const sheetUrl = "${csvUrl}";
-
-    function parseCSV(csvText) {
-        const rows = [];
-        const lines = csvText.split("\\n");
-        for (const line of lines) {
-            const matches = line.match(/("(?:[^"]|"")*"|[^",]+)(?=,|$)/g);
-            if (matches) {
-                rows.push(matches.map(field => field.replace(/^"|"$/g, "").trim()));
-            }
-        }
-        return rows;
-    }
 
     fetch(sheetUrl)
         .then(response => response.text())
         .then(csvText => {
-            const rows = parseCSV(csvText);
+            const rows = csvText.split("\\n").map(row => row.split(","));
             const container = document.getElementById("fucketlist-container");
 
-            // Add legend without the word "Legend"
-            const legend = document.createElement("div");
-            legend.style.marginBottom = "20px";
-            legend.style.fontFamily = "Helvetica, Arial, sans-serif";
-            legend.innerHTML = \`
-                <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%;"></span> Initiated  
-                <span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-left: 15px;"></span> Help Needed
-                <span style="display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; margin-left: 15px;"></span> In Progress
-                <span style="text-decoration: line-through; margin-left: 15px;">Completed</span>
-            \`;
-            container.appendChild(legend);
-
-            // Build HTML for the list
             const list = document.createElement("ul");
             list.style.listStyle = "none";
             list.style.padding = "0";
             list.style.margin = "20px auto";
-            list.style.display = "grid";
-            list.style.gridTemplateColumns = "repeat(auto-fit, minmax(300px, 1fr))";
-            list.style.gap = "20px";
-            list.style.maxWidth = "1000px";
-            list.style.fontFamily = "Helvetica, Arial, sans-serif";
+            list.style.fontFamily = "adobe-handwriting-tiffany, sans-serif";
+            list.style.maxWidth = "800px";
 
             rows.slice(1).forEach(([title, status]) => {
                 if (!title) return;
 
                 const li = document.createElement("li");
-                li.style.backgroundColor = "#fff";
-                li.style.borderRadius = "5px";
-                li.style.padding = "10px 15px";
-                li.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
-                li.style.display = "flex";
-                li.style.justifyContent = "space-between";
-                li.style.alignItems = "center";
-                li.style.fontFamily = "Helvetica, Arial, sans-serif";
-
-                const titleSpan = document.createElement("span");
-                if (status.toLowerCase().trim() === "completed") {
-                    titleSpan.style.textDecoration = "line-through";
-                }
-                titleSpan.textContent = title;
+                li.classList.add("fucketlist-item");
 
                 const dotSpan = document.createElement("span");
-                if (status.toLowerCase().trim() === "initiated") {
-                    dotSpan.style.backgroundColor = "orange";
-                } else if (status.toLowerCase().trim() === "help needed") {
-                    dotSpan.style.backgroundColor = "red";
-                } else if (status.toLowerCase().trim() === "in progress") {
-                    dotSpan.style.backgroundColor = "blue";
-                }
-                dotSpan.style.height = "10px";
-                dotSpan.style.width = "10px";
-                dotSpan.style.borderRadius = "50%";
-                dotSpan.style.display = status.toLowerCase().trim() === "default" || status.toLowerCase().trim() === "completed" ? "none" : "inline-block";
+                dotSpan.classList.add("fucketlist-dot");
 
+                const titleSpan = document.createElement("span");
+                titleSpan.classList.add("fucketlist-title");
+
+                if (status.toLowerCase().trim() === "in progress") {
+                    dotSpan.classList.add("blue");
+                    li.appendChild(dotSpan);
+                } else if (status.toLowerCase().trim() === "initiated") {
+                    dotSpan.classList.add("yellow");
+                    li.appendChild(dotSpan);
+                } else if (status.toLowerCase().trim() === "help needed") {
+                    titleSpan.classList.add("red");
+                } else if (status.toLowerCase().trim() === "completed") {
+                    titleSpan.style.textDecoration = "line-through";
+                }
+
+                titleSpan.textContent = title;
                 li.appendChild(titleSpan);
-                li.appendChild(dotSpan);
                 list.appendChild(li);
             });
 
+            container.innerHTML = ""; // Clear previous content
             container.appendChild(list);
         })
         .catch(error => {
             console.error("Error loading Fucketlist:", error);
-            const container = document.getElementById("fucketlist-container");
-            container.textContent = "Failed to load Fucketlist.";
         });
-</script>`;
+</script>
+`;
+
+    // Update the live preview
+    previewContainer.innerHTML = embedCode;
+
+    // Store the embed code for copying
     outputArea.value = embedCode;
 };
 
