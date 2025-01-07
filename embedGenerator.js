@@ -18,20 +18,19 @@ window.generateEmbedCode = function () {
 <script>
     const sheetUrl = "${csvUrl}";
 
-    // CSV parsing function that handles quoted fields and preserves titles with commas
+    // CSV parsing function to handle quoted fields and preserve commas
     function parseCSV(csvText) {
         const rows = [];
-        const lines = csvText.split("\n");
+        const lines = csvText.split("\\n");
         for (const line of lines) {
-            const matches = line.match(/("(?:[^"]|"")*"|[^",]+)(?=,|$)/g); // Match quoted and unquoted fields
+            const matches = line.match(/("(?:[^"]|"")*"|[^",]+)(?=,|$)/g);
             if (matches) {
-                rows.push(matches.map(field => field.replace(/^"|"$/g, "").trim())); // Remove surrounding quotes and trim spaces
+                rows.push(matches.map(field => field.replace(/^"|"$/g, "").trim()));
             }
         }
         return rows;
     }
 
-    // Fetch Google Sheet data
     fetch(sheetUrl)
         .then(response => response.text())
         .then(csvText => {
@@ -42,28 +41,28 @@ window.generateEmbedCode = function () {
             const legend = document.createElement("div");
             legend.style.marginBottom = "20px";
             legend.style.fontFamily = "Helvetica, Arial, sans-serif";
-            legend.innerHTML = "
+            legend.innerHTML = \`
                 <strong>Legend:</strong>
                 <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%; margin-right: 5px;"></span> Initiated
                 <span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-right: 5px;"></span> Help Needed
                 <span style="display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; margin-right: 5px;"></span> In Progress
                 <span style="text-decoration: line-through; margin-left: 15px;">Completed</span>
-            ";
+            \`;
             container.appendChild(legend);
 
-            // Build HTML
+            // Build HTML for the list
             const list = document.createElement("ul");
             list.style.listStyle = "none";
             list.style.padding = "0";
             list.style.margin = "20px auto";
             list.style.display = "grid";
-            list.style.gridTemplateColumns = "repeat(auto-fit, minmax(300px, 1fr))"; // Dynamic columns
+            list.style.gridTemplateColumns = "repeat(auto-fit, minmax(300px, 1fr))";
             list.style.gap = "20px";
             list.style.maxWidth = "1000px";
             list.style.fontFamily = "Helvetica, Arial, sans-serif";
 
             rows.slice(1).forEach(([title, status]) => {
-                if (!title) return; // Skip empty rows
+                if (!title) return;
 
                 const li = document.createElement("li");
                 li.style.backgroundColor = "#fff";
@@ -98,12 +97,6 @@ window.generateEmbedCode = function () {
                 list.appendChild(li);
             });
 
-            // Add a hidden placeholder to fix uneven rows
-            const placeholder = document.createElement("li");
-            placeholder.style.flex = "1 1 calc(33.333% - 20px)";
-            placeholder.style.visibility = "hidden";
-            list.appendChild(placeholder);
-
             container.appendChild(list);
         })
         .catch(error => {
@@ -113,11 +106,4 @@ window.generateEmbedCode = function () {
         });
 </script>`;
     outputArea.value = embedCode;
-};
-
-window.copyToClipboard = function () {
-    const outputArea = document.getElementById("embedCode");
-    outputArea.select();
-    document.execCommand("copy");
-    alert("Embed code copied to clipboard!");
 };
