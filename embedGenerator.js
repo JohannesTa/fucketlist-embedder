@@ -110,14 +110,18 @@ function generateEmbedCode(sheetUrl, viewType) {
 
     function sortItemsByColumn(rows, numColumns) {
         const itemsPerColumn = Math.ceil(rows.length / numColumns);
-        const sorted = Array.from({ length: numColumns }, () => []);
+        const sorted = [];
 
-        rows.forEach((row, index) => {
-            const colIndex = Math.floor(index / itemsPerColumn);
-            sorted[colIndex].push(row);
-        });
+        for (let i = 0; i < itemsPerColumn; i++) {
+            for (let col = 0; col < numColumns; col++) {
+                const index = col * itemsPerColumn + i;
+                if (index < rows.length) {
+                    sorted.push(rows[index]);
+                }
+            }
+        }
 
-        return sorted.flat();
+        return sorted;
     }
 
     fetch(sheetUrl)
