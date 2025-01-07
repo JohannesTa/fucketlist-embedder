@@ -54,7 +54,7 @@ window.generateEmbedCode = function () {
         bottom: -4px; /* Adjust to position the underline below the text */
         width: 100%;
         height: 6px; /* Thickness of the underline */
-        background: url("https://your-github-url/hand-drawn-underline.png") repeat-x;
+        background: url("https://johannesta.github.io/fucketlist-embedder/underline.png") repeat-x;
         background-size: contain;
     }
 </style>
