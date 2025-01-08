@@ -71,7 +71,7 @@ function generateEmbedCode(sheetUrl, viewType) {
                 border-radius: 10px;
                 min-width: 260px;
                 margin: 20px 20px;
-                font-family: 'adobe-handwriting-tiffany', sans-serif;
+                font-family: 'marydale', sans-serif;
             }
             .fucketlist-title {
                 font-size: 1.2em;
@@ -107,7 +107,7 @@ function generateEmbedCode(sheetUrl, viewType) {
             }
             .fucketlist-legend {
                 margin-bottom: 20px;
-                font-family: 'adobe-handwriting-tiffany', sans-serif;
+                font-family: 'marydale', sans-serif;
                 font-weight: 400;
                 font-style: normal;
                 font-size: 1.2em;
@@ -121,7 +121,7 @@ function generateEmbedCode(sheetUrl, viewType) {
                 margin: 20px auto;
                 display: grid;
                 gap: 20px;
-                font-family: 'adobe-handwriting-tiffany', sans-serif;
+                font-family: 'marydale', sans-serif;
                 font-weight: 800;
                 font-style: normal;
             }
