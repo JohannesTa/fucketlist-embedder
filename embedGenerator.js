@@ -61,6 +61,18 @@ function generateEmbedCode(sheetUrl, viewType) {
         <div id="fucketlist-container"></div>
         <link rel="stylesheet" href="https://use.typekit.net/vdp2gno.css">
         <style>
+            #fucketlist-container {
+                background-color: #fff; /* Light beige paper-like background */
+                background-image: radial-gradient(circle, rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.05)), url('https://www.transparenttextures.com/patterns/linen.png');
+                background-blend-mode: overlay;
+                border: 1px solid #d3d3d3;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1), 0px 1px 3px rgba(0, 0, 0, 0.06);
+                padding: 20px;
+                border-radius: 10px;
+                min-width: 260px;
+                margin: 20px 20px;
+                font-family: 'adobe-handwriting-tiffany', sans-serif;
+            }
             .fucketlist-title {
                 font-size: 1.2em;
                 line-height: 1.4;
@@ -109,7 +121,6 @@ function generateEmbedCode(sheetUrl, viewType) {
                 margin: 20px auto;
                 display: grid;
                 gap: 20px;
-                max-width: 1000px;
                 font-family: 'adobe-handwriting-tiffany', sans-serif;
                 font-weight: 800;
                 font-style: normal;
