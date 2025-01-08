@@ -168,29 +168,31 @@ function generateEmbedCode(sheetUrl, viewType) {
                                 const dotSpan = document.createElement("span");
                                 dotSpan.className = "fucketlist-dot";
                                 dotSpan.style.backgroundColor =
-                                    status === "initiated" ? "orange" :
-                                    status === "in progress" ? "#00b2ff" :
-                                    status === "help needed" ? "black" : "black";
+                                    status.toLowerCase().trim() === "initiated" ? "orange" :
+                                    status.toLowerCase().trim() === "in progress" ? "#00b2ff" :
+                                    status.toLowerCase().trim() === "help needed" ? "black" : "black";
                                 li.appendChild(dotSpan);
                             } else {
                                 const numberSpan = document.createElement("span");
                                 numberSpan.className = "fucketlist-number";
                                 numberSpan.textContent = \`\${sortedNumberRows[index][0]}.\`;
                                 numberSpan.style.color =
-                                    status === "initiated" ? "orange" :
-                                    status === "in progress" ? "#00b2ff" :
-                                    status === "help needed" ? "black" : "black";
+                                    status.toLowerCase().trim() === "initiated" ? "orange" :
+                                    status.toLowerCase().trim() === "in progress" ? "#00b2ff" :
+                                    status.toLowerCase().trim() === "help needed" ? "black" : "black";
                                 li.appendChild(numberSpan);
                             }
 
                             const titleSpan = document.createElement("span");
                             titleSpan.className = "fucketlist-title";
                             titleSpan.textContent = title;
-                            if (status === "hidden") {
+                            if (status.toLowerCase().trim() === "hidden") {
                                 titleSpan.textContent = "To be revealed soon";
                                 titleSpan.classList.add("hidden");
-                            } else if (status === "completed") {
+                            } else if (status.toLowerCase().trim() === "completed") {
                                 titleSpan.style.textDecoration = "line-through";
+                            } else if (status.toLowerCase().trim() === "help needed") {
+                                titleSpan.classList.add("help-needed");
                             }
                             li.appendChild(titleSpan);
                             list.appendChild(li);
