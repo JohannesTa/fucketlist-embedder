@@ -184,8 +184,8 @@ function generateEmbedCode(sheetUrl, viewType) {
                     const legend = document.createElement("div");
                     legend.className = "fucketlist-legend";
                     legend.innerHTML = \`
-                        <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%;"></span> Initiated  
-                        <span style="display: inline-block; width: 10px; height: 10px; background-color: #00b2ff; border-radius: 50%; margin-left: 15px;"></span> In Progress
+                        <span style="display: inline-block; width: 10px; height: 10px; background-color: orange; border-radius: 50%;"></span> Started  
+                        <span style="display: inline-block; width: 10px; height: 10px; background-color: #00b2ff; border-radius: 50%; margin-left: 15px;"></span> Making Progress
                         <span style="color: black; text-decoration: underline; text-decoration-color: red; margin-left: 15px;">Help Needed</span>
                         <span style="text-decoration: line-through; margin-left: 15px;">Completed</span>
                     \`;
@@ -220,8 +220,8 @@ function generateEmbedCode(sheetUrl, viewType) {
                                 const dotSpan = document.createElement("span");
                                 dotSpan.className = "fucketlist-dot";
                                 dotSpan.style.backgroundColor =
-                                    status.toLowerCase().trim() === "initiated" ? "orange" :
-                                    status.toLowerCase().trim() === "in progress" ? "#00b2ff" :
+                                    status.toLowerCase().trim() === "started" ? "orange" :
+                                    status.toLowerCase().trim() === "making progress" ? "#00b2ff" :
                                     status.toLowerCase().trim() === "help needed" ? "black" : "black";
                                 li.appendChild(dotSpan);
                             } else {
@@ -229,8 +229,8 @@ function generateEmbedCode(sheetUrl, viewType) {
                                 numberSpan.className = "fucketlist-number";
                                 numberSpan.textContent = \`\${sortedNumberRows[index][0]}.\`;
                                 numberSpan.style.color =
-                                    status.toLowerCase().trim() === "initiated" ? "orange" :
-                                    status.toLowerCase().trim() === "in progress" ? "#00b2ff" :
+                                    status.toLowerCase().trim() === "started" ? "orange" :
+                                    status.toLowerCase().trim() === "making progress" ? "#00b2ff" :
                                     status.toLowerCase().trim() === "help needed" ? "black" : "black";
                                 li.appendChild(numberSpan);
                             }
