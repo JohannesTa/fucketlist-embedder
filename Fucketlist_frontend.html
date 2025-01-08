@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fucketlist Embed Generator</title>
+    <link rel="stylesheet" href="https://use.typekit.net/vdp2gno.css">
+    <style>
+        body {
+            font-family: helvetica, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #fff;
+        }
+
+        .content {
+            background: #e6f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .input-field {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .preview-container {
+            margin-top: 30px;
+        }
+
+        .preview-header {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .preview-area {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: white;
+            height: 300px;
+            overflow: auto;
+        }
+
+        .output-area {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            overflow: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .step {
+            margin-bottom: 20px;
+        }
+
+        .step-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .template-section {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .template-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .status-image {
+            display: block;
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h1>Fucketlist Embed Generator</h1>
+        <p>Create a digital copy of your Fucketlist with live updates on your progress! Follow the steps below to set up
+            your list and embed it wherever you need it.</p>
+
+        <div class="step">
+            <h2 class="step-header">Step 1: Download or Copy the Template</h2>
+            <p>Download the Google Sheet template or copy it to your own drive. Fill it with your list items and set
+                their status to one of the following:</p>
+            <ul>
+                <li><strong>Started: </strong>Sets a yellow marker to the item</li>
+                <li><strong>Making Progress: </strong>Sets a blue marker to the item</li>
+                <li><strong>Help Needed: </strong>Draws a red line below the item</li>
+                <li><strong>Completed: </strong>Crosses the item with a black line</li>
+                <li><strong>Hidden: </strong>Makes the item scratched out and changes it to "To be revealed soon"</li>
+            </ul>
+            <img src="https://johannesta.github.io/fucketlist-embedder/list-example.png"
+                alt="Example of Fucketlist statuses" class="status-image">
+            <div class="template-links">
+                <a href="https://docs.google.com/spreadsheets/d/1g_G1rTpxI6mfGK5nusDOrgYjrkfTksfevIJRqtuuGug/export?format=xlsx"
+                    class="button" download="Fucketlist_Template.xlsx">Download Template</a>
+                <button id="copyTemplate" class="button">Copy Template to My Drive</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2 class="step-header">Step 2: Create a Public Link</h2>
+            <p>Make your Google Sheet public and paste the link below:</p>
+            <label for="sheetUrl" class="label">Google Sheet URL:</label>
+            <input type="text" id="sheetUrl" class="input-field" placeholder="Enter your Google Sheet URL">
+        </div>
+
+        <div class="step">
+            <h2 class="step-header">Step 3: Choose List Style</h2>
+            <p>Select how you want your list to appear:</p>
+            <label><input type="radio" name="viewType" value="dots" checked> Dots</label>
+            <label><input type="radio" name="viewType" value="numbers"> Numbers</label>
+        </div>
+
+        <div class="step">
+            <h2 class="step-header">Step 4: Generate the Embed Code</h2>
+            <button id="generateCode" class="button">Generate Embed Code</button>
+        </div>
+
+        <div class="step">
+            <h2 class="step-header">Step 5: Copy and Use the Code</h2>
+            <p>Copy the generated code below and paste it into your website, newsletter, or wherever you need it:</p>
+            <textarea id="outputArea" class="output-area" readonly></textarea>
+            <div>
+                <button id="copyToClipboard" class="button">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div class="preview-container">
+            <h2 class="preview-header">Preview:</h2>
+            <div id="previewArea" class="preview-area"></div>
+        </div>
+    </div>
+
+    <script src="https://johannesta.github.io/fucketlist-embedder/embedGenerator.js"></script>
+    <script>
+        document.getElementById("copyTemplate").addEventListener("click", () => {
+            const templateUrl = "https://docs.google.com/spreadsheets/d/1g_G1rTpxI6mfGK5nusDOrgYjrkfTksfevIJRqtuuGug/copy";
+            window.open(templateUrl, "_blank");
+        });
+    </script>
+</body>
+
+</html>
