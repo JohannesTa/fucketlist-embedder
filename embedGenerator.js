@@ -8,9 +8,9 @@ document.getElementById("generateCode").addEventListener("click", () => {
 
     // Clear and set up preview
     const previewArea = document.getElementById("previewArea");
-    previewArea.innerHTML = "";
+    previewArea.innerHTML = ""; // Clear previous preview content
 
-    // Extract and apply <style> and <script>
+    // Create a container for the preview content
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = embedCode;
 
@@ -23,7 +23,7 @@ document.getElementById("generateCode").addEventListener("click", () => {
     if (styleElement) {
         const newStyle = document.createElement("style");
         newStyle.textContent = styleElement.textContent;
-        document.head.appendChild(newStyle);
+        previewArea.appendChild(newStyle); // Attach style to the preview area
     }
 
     // Add <script>
@@ -31,7 +31,7 @@ document.getElementById("generateCode").addEventListener("click", () => {
     if (scriptElement) {
         const newScript = document.createElement("script");
         newScript.textContent = scriptElement.textContent;
-        document.body.appendChild(newScript);
+        previewArea.appendChild(newScript); // Attach script to the preview area
     }
 });
 
@@ -47,9 +47,10 @@ viewTypeRadios.forEach(radio => {
     radio.addEventListener("change", () => {
         // Reset generated code and preview on view type switch
         document.getElementById("outputArea").value = "";
-        document.getElementById("previewArea").innerHTML = "";
+        document.getElementById("previewArea").innerHTML = ""; // Clear preview
     });
 });
+
 
 function generateEmbedCode(sheetUrl, viewType) {
     return `
