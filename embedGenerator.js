@@ -1,6 +1,6 @@
 document.getElementById("generateCode").addEventListener("click", () => {
     const sheetUrl = document.getElementById("sheetUrl").value.trim();
-    const viewType = document.getElementById("viewType").value;
+    const viewType = document.querySelector('input[name="viewType"]:checked').value;
     const embedCode = generateEmbedCode(sheetUrl, viewType);
 
     // Populate output area
@@ -42,6 +42,14 @@ document.getElementById("copyToClipboard").addEventListener("click", () => {
     alert("Embed code copied to clipboard!");
 });
 
+const viewTypeRadios = document.querySelectorAll('input[name="viewType"]');
+viewTypeRadios.forEach(radio => {
+    radio.addEventListener("change", () => {
+        // Reset generated code and preview on view type switch
+        document.getElementById("outputArea").value = "";
+        document.getElementById("previewArea").innerHTML = "";
+    });
+});
 
 function generateEmbedCode(sheetUrl, viewType) {
     return `
