@@ -26,11 +26,15 @@ document.getElementById("generateCode").addEventListener("click", () => {
         previewArea.appendChild(newStyle); // Attach style to the preview area
     }
 
-    // Add <script>
+    // Add <script> wrapped in an IIFE to avoid variable redeclaration
     const scriptElement = tempDiv.querySelector("script");
     if (scriptElement) {
         const newScript = document.createElement("script");
-        newScript.textContent = scriptElement.textContent;
+        newScript.textContent = `
+            (() => {
+                ${scriptElement.textContent}
+            })();
+        `;
         previewArea.appendChild(newScript); // Attach script to the preview area
     }
 });
