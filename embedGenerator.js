@@ -3,9 +3,36 @@ document.getElementById("generateCode").addEventListener("click", () => {
     const viewType = document.getElementById("viewType").value;
     const embedCode = generateEmbedCode(sheetUrl, viewType);
 
-    // Populate output and preview areas
+    // Populate output area
     document.getElementById("outputArea").value = embedCode;
-    document.getElementById("previewArea").innerHTML = embedCode;
+
+    // Clear and set up preview
+    const previewArea = document.getElementById("previewArea");
+    previewArea.innerHTML = "";
+
+    // Extract and apply <style> and <script>
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = embedCode;
+
+    // Add container to preview
+    const container = tempDiv.querySelector("#fucketlist-container");
+    previewArea.appendChild(container);
+
+    // Add <style>
+    const styleElement = tempDiv.querySelector("style");
+    if (styleElement) {
+        const newStyle = document.createElement("style");
+        newStyle.textContent = styleElement.textContent;
+        document.head.appendChild(newStyle);
+    }
+
+    // Add <script>
+    const scriptElement = tempDiv.querySelector("script");
+    if (scriptElement) {
+        const newScript = document.createElement("script");
+        newScript.textContent = scriptElement.textContent;
+        document.body.appendChild(newScript);
+    }
 });
 
 document.getElementById("copyToClipboard").addEventListener("click", () => {
@@ -14,6 +41,7 @@ document.getElementById("copyToClipboard").addEventListener("click", () => {
     document.execCommand("copy");
     alert("Embed code copied to clipboard!");
 });
+
 
 function generateEmbedCode(sheetUrl, viewType) {
     return `
