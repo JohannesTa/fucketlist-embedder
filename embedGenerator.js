@@ -151,10 +151,11 @@ function generateEmbedCode(sheetUrl, viewType) {
             const renderList = () => {
                 const numColumns = determineColumns();
                 const sortedRows = sortItemsByColumn(rows, numColumns);
+                const sortedNumbers = sortItemsByColumn(
+                    Array.from({ length: rows.length }, (_, i) => [i + 1]),
+                    numColumns
+                );
 
-                const sortedNumbers = Array.from({ length: rows.length }, (_, i) => i + 1); // Sequential numbers
-                const sortedNumberRows = sortItemsByColumn(sortedNumbers.map(n => [n.toString()]), numColumns);
-                
                 const list = document.createElement("ul");
                 list.className = "fucketlist-list";
                 list.style.gridTemplateColumns = \`repeat(\${numColumns}, 1fr)\`;
@@ -168,28 +169,17 @@ function generateEmbedCode(sheetUrl, viewType) {
                     if ("${viewType}" === "dots") {
                         const dotSpan = document.createElement("span");
                         dotSpan.className = "fucketlist-dot";
-                        dotSpan.style.backgroundColor = status.toLowerCase().trim() === "completed" ? "black" : status.toLowerCase().trim() === "initiated" ? "orange" : "#00b2ff";
+                        dotSpan.style.backgroundColor = status.toLowerCase().trim() === "completed" ? "black" : 
+                            status.toLowerCase().trim() === "initiated" ? "orange" : 
+                            status.toLowerCase().trim() === "in progress" ? "#00b2ff" : "black";
                         li.appendChild(dotSpan);
                     } else {
                         const numberSpan = document.createElement("span");
                         numberSpan.className = "fucketlist-number";
-                        if (status.toLowerCase().trim() === "hidden") {
-                        titleSpan.className = "fucketlist-title hidden"; // Add the "hidden" class
-                        titleSpan.textContent = "To be revealed soon"; // Replace the title with "To be revealed"
-                        } else if (status.toLowerCase().trim() === "initiated") {
-                        numberSpan.style.color = "orange";
-                        } else if (status.toLowerCase().trim() === "in progress") {
-                        numberSpan.style.color = "#00b2ff";
-                        } else if (status.toLowerCase().trim() === "help needed") {
-                        numberSpan.style.color = "black";
-                        titleSpan.classList.add("help-needed");
-                        } else if (status.toLowerCase().trim() === "completed") {
-                        numberSpan.style.color = "black"; // Black for completed
-                        titleSpan.style.textDecoration = "line-through"; // Add line-through for completed
-                        } else {
-                        numberSpan.style.color = "black"; // Default color
-                        }
-                        numberSpan.textContent = \`\${sortedNumberRows[index][0]}.\`;
+                        numberSpan.style.color = status.toLowerCase().trim() === "completed" ? "black" : 
+                            status.toLowerCase().trim() === "initiated" ? "orange" : 
+                            status.toLowerCase().trim() === "in progress" ? "#00b2ff" : "black";
+                        numberSpan.textContent = \`\${sortedNumbers[index][0]}.\`;
                         li.appendChild(numberSpan);
                     }
 
@@ -228,6 +218,7 @@ function generateEmbedCode(sheetUrl, viewType) {
 
     return `<div id="fucketlist-container"></div>${sharedStyles}${script}`;
 }
+
 
 document.getElementById("generateCode").addEventListener("click", () => {
     const sheetUrl = document.getElementById("sheetUrl").value;
